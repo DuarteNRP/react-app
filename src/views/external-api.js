@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import axios from "axios";
 
 const ExternalApi = () => {
   const [message, setMessage] = useState("");
@@ -24,7 +25,6 @@ const ExternalApi = () => {
   const callSecureApi = async () => {
     try {
       const token = await getAccessTokenSilently();
-      console.log(token);
       const response = await fetch(
         `${serverUrl}/api/messages/protected-message`,
         {
@@ -35,12 +35,30 @@ const ExternalApi = () => {
       );
 
       const responseData = await response.json();
-      console.log(responseData);
       setMessage(responseData.message);
     } catch (error) {
       setMessage(error.message);
     }
   };
+  async function callSecureScopeApi(){
+    const token = await getAccessTokenSilently();
+    console.log(token);
+    var options = {
+    method: 'GET',
+    url: `${serverUrl}/api/messages/private-scoped`,
+    headers: {
+    'content-type': 'application/json',
+    authorization: `Bearer ${token}`,
+    'cache-control': 'no-cache'
+  },
+};
+
+axios.request(options).then(function (response) {
+  console.log(response.data);
+}).catch(function (error) {
+  console.error(error);
+});
+  }
 
   return (
     <div className="container">
@@ -64,6 +82,13 @@ const ExternalApi = () => {
           onClick={callSecureApi}
         >
           Get Protected Message
+        </button>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={callSecureScopeApi}
+        >
+          Get Scoped Message
         </button>
       </div>
       {message && (

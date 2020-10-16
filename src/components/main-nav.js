@@ -29,6 +29,14 @@ class MainNav extends React.Component {
         >
           External API
         </NavLink>
+        <NavLink
+          to="/test"
+          exact
+          className="nav-link"
+          activeClassName="router-link-exact-active"
+        >
+          Test
+        </NavLink>
       </div>
     );
   }
